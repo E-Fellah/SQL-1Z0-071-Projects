@@ -1,0 +1,85 @@
+-- This script demonstrates how to manage employee data using SQL in a Human Resources Management System.
+-- It includes operations such as selecting, inserting, updating, and deleting employee records.
+
+-- Create table for employees
+CREATE TABLE employees (
+    emp_id NUMBER PRIMARY KEY,           -- Employee ID (unique identifier)
+    first_name VARCHAR2(50),             -- First name of the employee
+    last_name VARCHAR2(50),              -- Last name of the employee
+    hire_date DATE,                      -- Date when the employee was hired
+    salary NUMBER(8, 2),                 -- Employee's salary
+    department_id NUMBER,                -- ID of the department the employee belongs to
+    CONSTRAINT fk_department FOREIGN KEY (department_id) REFERENCES departments(department_id)
+);
+
+-- Create table for departments
+CREATE TABLE departments (
+    department_id NUMBER PRIMARY KEY,    -- Department ID (unique identifier)
+    department_name VARCHAR2(100)        -- Name of the department
+);
+
+-- Insert sample data into departments
+INSERT INTO departments (department_id, department_name) VALUES (1, 'Human Resources');
+INSERT INTO departments (department_id, department_name) VALUES (2, 'Finance');
+INSERT INTO departments (department_id, department_name) VALUES (3, 'Engineering');
+
+-- Insert sample data into employees
+INSERT INTO employees (emp_id, first_name, last_name, hire_date, salary, department_id) VALUES (1001, 'John', 'Doe', DATE '2020-01-15', 75000, 1);
+INSERT INTO employees (emp_id, first_name, last_name, hire_date, salary, department_id) VALUES (1002, 'Jane', 'Smith', DATE '2019-03-10', 85000, 2);
+INSERT INTO employees (emp_id, first_name, last_name, hire_date, salary, department_id) VALUES (1003, 'Emily', 'Jones', DATE '2018-07-20', 95000, 3);
+
+-- Retrieve all employee details
+SELECT * FROM employees;
+
+-- Retrieve employees in the 'Finance' department
+SELECT e.emp_id, e.first_name, e.last_name, e.salary, d.department_name
+FROM employees e
+JOIN departments d ON e.department_id = d.department_id
+WHERE d.department_name = 'Finance';
+
+-- Update salary of employee with ID 1002
+UPDATE employees
+SET salary = 88000
+WHERE emp_id = 1002;
+
+-- Delete employee with ID 1003
+DELETE FROM employees
+WHERE emp_id = 1003;
+
+-- Retrieve all employee details after updates
+SELECT * FROM employees;
+
+
+/*
+EXPLANATION OF THE CODE
+
+Create table for employees: Defines a table employees with columns for employee details such as ID, name, hire date, salary, and department ID. It also sets a foreign key constraint linking department_id to the departments table.
+Create table for departments: Defines a table departments with columns for department ID and name.
+Insert sample data into departments: Adds sample departments into the departments table.
+Insert sample data into employees: Adds sample employees into the employees table with their details.
+Retrieve all employee details: Queries and displays all records from the employees table.
+Retrieve employees in the 'Finance' department: Joins employees and departments tables to filter and display employees working in the 'Finance' department.
+Update salary of employee with ID 1002: Updates the salary for the employee with emp_id 1002.
+Delete employee with ID 1003: Deletes the record of the employee with emp_id 1003.
+Retrieve all employee details after updates: Displays all records from the employees table after the update and delete operations.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Relational Database Concepts: Creation of tables and relationships.
+SQL SELECT Statement: Querying data from tables.
+Column Aliases: Use in SELECT statement (implicit in example).
+Sorting & Limiting Rows: Not directly used but implied in SELECT queries.
+Substitution Variables & DEFINE: Not used in this example.
+Single-Row Functions: DATE function used to format dates.
+Date Manipulation: Using DATE literals and handling hire dates.
+Conversion Functions: TO_DATE for date formatting.
+Group Functions: Not used but could be added for aggregations.
+Joins: INNER JOIN between employees and departments.
+DML Statements: INSERT, UPDATE, DELETE operations.
+DDL Statements: CREATE TABLE statements.
+Views: Not used in this example.
+User Access: Not covered explicitly, but typically relevant for access control.
+*/
