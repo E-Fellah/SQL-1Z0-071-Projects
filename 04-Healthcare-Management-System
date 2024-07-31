@@ -1,0 +1,109 @@
+-- This SQL script creates tables for a hotel reservation system, inserts sample data,
+-- and performs various queries to retrieve reservation details, including sorting and filtering.
+
+-- Create table for guests
+CREATE TABLE Guests (
+    GuestID NUMBER PRIMARY KEY,                -- Unique identifier for each guest
+    FirstName VARCHAR2(50),                    -- First name of the guest
+    LastName VARCHAR2(50),                     -- Last name of the guest
+    Email VARCHAR2(100)                        -- Email address of the guest
+);
+
+-- Create table for hotels
+CREATE TABLE Hotels (
+    HotelID NUMBER PRIMARY KEY,                -- Unique identifier for each hotel
+    HotelName VARCHAR2(100),                   -- Name of the hotel
+    Location VARCHAR2(100)                     -- Location of the hotel
+);
+
+-- Create table for rooms
+CREATE TABLE Rooms (
+    RoomID NUMBER PRIMARY KEY,                 -- Unique identifier for each room
+    HotelID NUMBER,                            -- Foreign key linking to the Hotels table
+    RoomType VARCHAR2(50),                     -- Type of the room (e.g., Single, Double)
+    Rate NUMBER(10, 2),                        -- Rate of the room per night
+    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID)  -- Establishing foreign key constraint
+);
+
+-- Create table for reservations
+CREATE TABLE Reservations (
+    ReservationID NUMBER PRIMARY KEY,          -- Unique identifier for each reservation
+    GuestID NUMBER,                            -- Foreign key linking to the Guests table
+    RoomID NUMBER,                             -- Foreign key linking to the Rooms table
+    CheckInDate DATE,                          -- Check-in date for the reservation
+    CheckOutDate DATE,                         -- Check-out date for the reservation
+    FOREIGN KEY (GuestID) REFERENCES Guests(GuestID),  -- Establishing foreign key constraint
+    FOREIGN KEY (RoomID) REFERENCES Rooms(RoomID)   -- Establishing foreign key constraint
+);
+
+-- Insert sample data into Guests table
+INSERT INTO Guests (GuestID, FirstName, LastName, Email) VALUES (1, 'John', 'Doe', 'john.doe@example.com');
+INSERT INTO Guests (GuestID, FirstName, LastName, Email) VALUES (2, 'Jane', 'Smith', 'jane.smith@example.com');
+
+-- Insert sample data into Hotels table
+INSERT INTO Hotels (HotelID, HotelName, Location) VALUES (1, 'The Grand Hotel', 'New York');
+INSERT INTO Hotels (HotelID, HotelName, Location) VALUES (2, 'Seaside Inn', 'Miami');
+
+-- Insert sample data into Rooms table
+INSERT INTO Rooms (RoomID, HotelID, RoomType, Rate) VALUES (1, 1, 'Single', 150.00);
+INSERT INTO Rooms (RoomID, HotelID, RoomType, Rate) VALUES (2, 1, 'Double', 250.00);
+INSERT INTO Rooms (RoomID, HotelID, RoomType, Rate) VALUES (3, 2, 'Single', 100.00);
+INSERT INTO Rooms (RoomID, HotelID, RoomType, Rate) VALUES (4, 2, 'Double', 180.00);
+
+-- Insert sample data into Reservations table
+INSERT INTO Reservations (ReservationID, GuestID, RoomID, CheckInDate, CheckOutDate) 
+VALUES (1, 1, 1, TO_DATE('2024-08-01', 'YYYY-MM-DD'), TO_DATE('2024-08-07', 'YYYY-MM-DD'));
+INSERT INTO Reservations (ReservationID, GuestID, RoomID, CheckInDate, CheckOutDate) 
+VALUES (2, 2, 3, TO_DATE('2024-08-10', 'YYYY-MM-DD'), TO_DATE('2024-08-15', 'YYYY-MM-DD'));
+
+-- Query to retrieve all reservations with guest names and hotel details
+SELECT r.ReservationID,
+       g.FirstName || ' ' || g.LastName AS GuestName,
+       h.HotelName,
+       ro.RoomType,
+       r.CheckInDate,
+       r.CheckOutDate,
+       ro.Rate
+  FROM Reservations r
+  JOIN Guests g ON r.GuestID = g.GuestID
+  JOIN Rooms ro ON r.RoomID = ro.RoomID
+  JOIN Hotels h ON ro.HotelID = h.HotelID;
+
+-- Query to retrieve reservations sorted by CheckInDate and limited to the top 10 results
+SELECT r.ReservationID,
+       g.FirstName || ' ' || g.LastName AS GuestName,
+       h.HotelName,
+       ro.RoomType,
+       r.CheckInDate,
+       r.CheckOutDate,
+       ro.Rate
+  FROM Reservations r
+  JOIN Guests g ON r.GuestID = g.GuestID
+  JOIN Rooms ro ON r.RoomID = ro.RoomID
+  JOIN Hotels h ON ro.HotelID = h.HotelID
+ ORDER BY r.CheckInDate
+ FETCH FIRST 10 ROWS ONLY;
+
+
+/*
+EXPLANATION OF THE CODE
+
+Creating Tables: The script starts by creating four tables: Guests, Hotels, Rooms, and Reservations. Each table has its own columns and primary keys. Foreign keys are established to ensure relational integrity between tables.
+Inserting Sample Data: Data is inserted into each table to provide sample entries for guests, hotels, rooms, and reservations.
+Retrieving Reservation Details: A query is performed to retrieve details about reservations, including guest names, hotel names, room types, and rates. The JOIN clauses are used to combine data from multiple tables.
+Sorting and Limiting Results: Another query retrieves reservation details, sorts them by check-in date, and limits the results to the top 10 reservations.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Creating Tables: Demonstrates table creation and definition of primary and foreign keys.
+Inserting Data: Covers the INSERT statement for adding records.
+Retrieving Data: Uses the SELECT statement with JOIN to retrieve and combine data from multiple tables.
+Sorting Data: Uses the ORDER BY clause to sort results.
+Limiting Rows: Uses the FETCH FIRST 10 ROWS ONLY clause to limit the number of results.
+Column Aliases: Uses aliases to make query results more readable.
+Concatenation: Demonstrates concatenation of strings in the SELECT statement.
+Date Manipulation: Uses TO_DATE to handle date values.
+*/
