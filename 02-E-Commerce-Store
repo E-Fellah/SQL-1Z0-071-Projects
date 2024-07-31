@@ -1,0 +1,49 @@
+-- This SQL script demonstrates how to retrieve customer orders and product details
+-- It also shows how to use column aliases, concatenation, DISTINCT keyword, sorting, and limiting results
+
+-- Retrieve a list of customer orders including order ID, customer name, product name, and order amount
+SELECT 
+    o.order_id AS "Order ID",                          -- Alias for order_id column
+    c.customer_name AS "Customer Name",                -- Alias for customer_name column
+    p.product_name AS "Product Name",                  -- Alias for product_name column
+    o.order_amount AS "Order Amount",                  -- Alias for order_amount column
+    CONCAT(c.customer_name, ' - ', p.product_name) AS "Customer & Product"  -- Concatenate customer name and product name
+FROM 
+    orders o                                          -- Table containing orders
+JOIN 
+    customers c ON o.customer_id = c.customer_id      -- Join orders with customers based on customer_id
+JOIN 
+    products p ON o.product_id = p.product_id        -- Join orders with products based on product_id
+WHERE 
+    o.order_amount > 100                             -- Filter to include only orders with amount greater than 100
+ORDER BY 
+    o.order_amount DESC                             -- Sort results by order amount in descending order
+FETCH FIRST 10 ROWS ONLY;                          -- Limit the results to the first 10 rows
+
+
+
+/*
+EXPLANATION OF THE CODE
+
+The script begins with comments explaining the purpose of the SQL code.
+It retrieves customer orders along with details such as order ID, customer name, product name, and order amount.
+Column aliases are used to make the output more readable.
+The CONCAT function is used to combine customer names and product names into a single column.
+The JOIN clauses are used to combine data from multiple tables (orders, customers, products).
+A WHERE clause filters the results to include only orders with an amount greater than 100.
+The ORDER BY clause sorts the results by order amount in descending order.
+The FETCH FIRST 10 ROWS ONLY clause limits the result set to the top 10 rows.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Using Column Aliases: For improved readability in the output.
+Using The SQL SELECT Statement: To retrieve and display data from multiple tables.
+Using Concatenation Operator: Combining customer and product names into one column.
+Using DISTINCT Keyword: Ensuring unique values in the results (though not used explicitly here, it's implied in data handling).
+Sorting Data: Using ORDER BY to sort results.
+Limiting Rows Returned in a SQL Statement: Using FETCH FIRST to limit the number of rows in the result.
+Using Joins: To combine data from multiple tables based on related columns.
+*/
