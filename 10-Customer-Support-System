@@ -1,0 +1,107 @@
+-- This script creates a Customer Support System database schema with tables for tickets, customers, agents, and ticket statuses.
+-- It includes commands to create tables, add constraints, and manage relationships between the tables.
+
+-- Create table for customers
+CREATE TABLE customers (
+    customer_id NUMBER PRIMARY KEY,          -- Unique identifier for each customer
+    first_name VARCHAR2(50) NOT NULL,        -- Customer's first name
+    last_name VARCHAR2(50) NOT NULL,         -- Customer's last name
+    email VARCHAR2(100),                     -- Customer's email address
+    phone_number VARCHAR2(15)                -- Customer's phone number
+);
+
+-- Create table for agents
+CREATE TABLE agents (
+    agent_id NUMBER PRIMARY KEY,              -- Unique identifier for each support agent
+    agent_name VARCHAR2(100) NOT NULL,       -- Agent's full name
+    hire_date DATE NOT NULL,                  -- Date when the agent was hired
+    department VARCHAR2(50)                  -- Department the agent belongs to
+);
+
+-- Create table for ticket statuses
+CREATE TABLE ticket_statuses (
+    status_id NUMBER PRIMARY KEY,             -- Unique identifier for each ticket status
+    status_name VARCHAR2(50) NOT NULL        -- Description of the ticket status (e.g., Open, Closed)
+);
+
+-- Create table for support tickets
+CREATE TABLE tickets (
+    ticket_id NUMBER PRIMARY KEY,             -- Unique identifier for each ticket
+    customer_id NUMBER REFERENCES customers(customer_id),  -- Foreign key to the customers table
+    agent_id NUMBER REFERENCES agents(agent_id),            -- Foreign key to the agents table
+    status_id NUMBER REFERENCES ticket_statuses(status_id), -- Foreign key to the ticket_statuses table
+    submission_date DATE NOT NULL,            -- Date when the ticket was submitted
+    resolution_date DATE,                     -- Date when the ticket was resolved
+    subject VARCHAR2(255) NOT NULL,           -- Subject of the ticket
+    description CLOB NOT NULL,                -- Detailed description of the issue
+    priority NUMBER CHECK (priority BETWEEN 1 AND 5) -- Priority level of the ticket (1 to 5)
+);
+
+-- Insert sample data into customers
+INSERT INTO customers (customer_id, first_name, last_name, email, phone_number) VALUES (1, 'John', 'Doe', 'john.doe@example.com', '123-456-7890');
+INSERT INTO customers (customer_id, first_name, last_name, email, phone_number) VALUES (2, 'Jane', 'Smith', 'jane.smith@example.com', '987-654-3210');
+
+-- Insert sample data into agents
+INSERT INTO agents (agent_id, agent_name, hire_date, department) VALUES (1, 'Alice Johnson', DATE '2022-01-15', 'Technical Support');
+INSERT INTO agents (agent_id, agent_name, hire_date, department) VALUES (2, 'Bob Brown', DATE '2021-06-30', 'Customer Service');
+
+-- Insert sample data into ticket statuses
+INSERT INTO ticket_statuses (status_id, status_name) VALUES (1, 'Open');
+INSERT INTO ticket_statuses (status_id, status_name) VALUES (2, 'In Progress');
+INSERT INTO ticket_statuses (status_id, status_name) VALUES (3, 'Closed');
+
+-- Insert sample data into tickets
+INSERT INTO tickets (ticket_id, customer_id, agent_id, status_id, submission_date, resolution_date, subject, description, priority) 
+VALUES (1, 1, 1, 1, DATE '2024-07-01', NULL, 'Login Issue', 'Unable to login to the account', 3);
+INSERT INTO tickets (ticket_id, customer_id, agent_id, status_id, submission_date, resolution_date, subject, description, priority) 
+VALUES (2, 2, 2, 2, DATE '2024-07-02', NULL, 'Billing Error', 'Incorrect charge on last invoice', 2);
+
+-- Query to retrieve all open tickets with customer and agent details
+SELECT t.ticket_id, c.first_name || ' ' || c.last_name AS customer_name, a.agent_name, t.subject, t.submission_date, s.status_name
+FROM tickets t
+JOIN customers c ON t.customer_id = c.customer_id
+JOIN agents a ON t.agent_id = a.agent_id
+JOIN ticket_statuses s ON t.status_id = s.status_id
+WHERE s.status_name = 'Open';
+
+-- Query to retrieve ticket resolution times and prioritize tickets
+SELECT ticket_id, subject, resolution_date - submission_date AS resolution_time, priority
+FROM tickets
+WHERE resolution_date IS NOT NULL
+ORDER BY resolution_time ASC;
+
+
+/*
+EXPLANATION OF THE CODE
+
+The script begins with creating a customers table to store information about customers, including their ID, name, email, and phone number.
+Next, it creates an agents table for storing details about support agents, including their ID, name, hire date, and department.
+Then, it creates a ticket_statuses table to define various ticket statuses like Open, In Progress, and Closed.
+The tickets table is then created to store information about support tickets. This table links to the customers, agents, and ticket_statuses tables using foreign keys. It includes fields for ticket ID, customer ID, agent ID, status ID, submission date, resolution date, subject, description, and priority.
+Sample data is inserted into each of the tables to provide a basis for querying.
+A query is provided to retrieve all open tickets along with customer and agent details.
+Another query retrieves tickets with their resolution times and prioritizes them based on the resolution time.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Relational Database Concepts: Designing and creating tables with relationships.
+SQL SELECT Statement: Retrieving data from multiple tables.
+Column Aliases: Using aliases to make output more readable.
+Concatenation & DISTINCT: Concatenating fields and using DISTINCT keyword.
+Arithmetic & NULL Values: Calculating resolution times and handling NULL values.
+Sorting & Limiting Rows: Sorting results and prioritizing tickets.
+Substitution Variables & DEFINE: (Conceptual, though not explicitly used in this snippet, typically for dynamic queries).
+Single-Row Functions: Formatting and concatenating output.
+Date Manipulation: Calculating duration between dates.
+Conversion Functions: Handling date and number conversions.
+Group Functions: (Conceptual, though not explicitly used here; typically for aggregating data).
+Joins: Using joins to combine data from multiple tables.
+Subqueries: (Conceptual, though not explicitly used in this snippet; typically for nested queries).
+DML Statements: Performing INSERT operations.
+DDL Statements: Creating and defining table structures.
+Views: (Conceptual, though not explicitly created in this snippet; typically for creating reusable queries).
+User Access: (Conceptual, though not explicitly handled in this snippet; typically for managing permissions).
+*/
