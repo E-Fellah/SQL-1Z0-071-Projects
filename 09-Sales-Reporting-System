@@ -1,0 +1,74 @@
+-- This SQL script generates a report for sales data by product and region.
+-- It calculates total sales amounts, lists the top sales representatives, and summarizes sales figures by region.
+
+-- Retrieve sales data by product and region, including total sales amount.
+SELECT 
+    p.product_name AS "Product Name",       -- Alias for product name
+    r.region_name AS "Region",              -- Alias for region name
+    SUM(s.sales_amount) AS "Total Sales"    -- Calculate the total sales amount
+FROM 
+    sales s                               -- Sales table
+JOIN 
+    products p ON s.product_id = p.product_id  -- Join with products table on product ID
+JOIN 
+    regions r ON s.region_id = r.region_id    -- Join with regions table on region ID
+GROUP BY 
+    p.product_name,                         -- Group by product name
+    r.region_name                           -- Group by region name
+ORDER BY 
+    SUM(s.sales_amount) DESC;               -- Sort results by total sales amount in descending order
+
+-- Retrieve the top 10 sales representatives by sales amount.
+SELECT 
+    sr.rep_name AS "Sales Representative",  -- Alias for sales representative name
+    SUM(s.sales_amount) AS "Total Sales"    -- Calculate total sales amount by representative
+FROM 
+    sales s                               -- Sales table
+JOIN 
+    sales_representatives sr ON s.rep_id = sr.rep_id  -- Join with sales representatives table on rep ID
+GROUP BY 
+    sr.rep_name                            -- Group by sales representative name
+ORDER BY 
+    SUM(s.sales_amount) DESC                -- Sort results by total sales amount in descending order
+FETCH FIRST 10 ROWS ONLY;                  -- Limit results to the top 10 sales representatives
+
+-- Retrieve sales data comparing sales between two different periods.
+SELECT 
+    p.product_name AS "Product Name",       -- Alias for product name
+    r.region_name AS "Region",              -- Alias for region name
+    SUM(CASE WHEN s.sales_date BETWEEN DATE '2024-01-01' AND DATE '2024-06-30' THEN s.sales_amount ELSE 0 END) AS "Sales H1 2024",
+    SUM(CASE WHEN s.sales_date BETWEEN DATE '2024-07-01' AND DATE '2024-12-31' THEN s.sales_amount ELSE 0 END) AS "Sales H2 2024"
+FROM 
+    sales s                               -- Sales table
+JOIN 
+    products p ON s.product_id = p.product_id  -- Join with products table on product ID
+JOIN 
+    regions r ON s.region_id = r.region_id    -- Join with regions table on region ID
+GROUP BY 
+    p.product_name,                         -- Group by product name
+    r.region_name                           -- Group by region name
+ORDER BY 
+    p.product_name,                         -- Sort results by product name
+    r.region_name;                          -- Then by region name
+
+
+/*
+EXPLANATION OF THE CODE
+
+Retrieve Sales Data by Product and Region: This query calculates the total sales amount for each product in each region. It joins the sales, products, and regions tables, groups the results by product and region, and sorts the results by the total sales amount in descending order.
+Retrieve Top 10 Sales Representatives: This query finds the top 10 sales representatives based on their total sales amount. It joins the sales and sales_representatives tables, groups the results by representative, and sorts them by the total sales amount in descending order. The FETCH FIRST 10 ROWS ONLY clause limits the results to the top 10 representatives.
+Compare Sales Between Two Periods: This query compares sales data between two periods (first half and second half of 2024). It calculates the total sales amount for each period, grouped by product and region, and sorts the results by product and region names.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Using Column Aliases: Aliases are used for columns to make the output more readable.
+Using Arithmetic Expressions: Calculates total sales amounts and performs comparisons between periods.
+Restricting and Sorting Data: Orders results by total sales amount and limits the results to the top 10 records.
+Using Subqueries: Uses conditional aggregation to compare sales across different periods.
+Using Joins: Joins multiple tables (sales, products, regions, sales_representatives) to retrieve comprehensive data.
+Group Functions: Uses SUM to aggregate sales data.
+Date Manipulation: Compares sales across different date ranges.
+*/
