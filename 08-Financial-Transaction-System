@@ -1,0 +1,74 @@
+-- This code retrieves transaction details, calculates total transaction amounts,
+-- and finds customers with more than 5 transactions. It demonstrates various SQL operations.
+
+-- Retrieve transaction details along with customer and branch information
+SELECT 
+    t.transaction_id AS "Transaction ID",
+    t.transaction_date AS "Transaction Date",
+    t.transaction_amount AS "Transaction Amount",
+    c.customer_name AS "Customer Name",
+    b.branch_name AS "Branch Name"
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+JOIN branches b ON t.branch_id = b.branch_id
+-- Sort the results by transaction amount in descending order
+ORDER BY t.transaction_amount DESC;
+
+-- Calculate the total transaction amount for each customer
+SELECT 
+    c.customer_name AS "Customer Name",
+    SUM(t.transaction_amount) AS "Total Transaction Amount"
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+GROUP BY c.customer_name
+-- Find customers with total transaction amounts greater than 5000
+HAVING SUM(t.transaction_amount) > 5000
+-- Sort the results by total transaction amount in descending order
+ORDER BY SUM(t.transaction_amount) DESC;
+
+-- Retrieve transaction details for transactions occurring in the last 30 days
+SELECT 
+    t.transaction_id AS "Transaction ID",
+    t.transaction_date AS "Transaction Date",
+    t.transaction_amount AS "Transaction Amount",
+    c.customer_name AS "Customer Name"
+FROM transactions t
+JOIN customers c ON t.customer_id = c.customer_id
+WHERE t.transaction_date >= SYSDATE - INTERVAL '30' DAY
+-- Sort the results by transaction date in ascending order
+ORDER BY t.transaction_date ASC;
+
+
+/*
+EXPLANATION OF THE CODE
+
+The first query retrieves detailed information about transactions, including transaction ID, date, amount, customer name, and branch name.
+The results are joined from the transactions, customers, and branches tables.
+It sorts the results by transaction amount in descending order.
+The second query calculates the total transaction amount for each customer.
+It joins the transactions and customers tables to aggregate the data by customer.
+It uses the SUM function to calculate the total amount and the HAVING clause to filter customers with total transactions greater than 5000.
+The results are sorted by the total transaction amount in descending order.
+The third query retrieves transactions that occurred in the last 30 days.
+It joins the transactions and customers tables and uses a WHERE clause to filter transactions based on the date.
+The results are sorted by transaction date in ascending order.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Retrieving Data using the SQL SELECT Statement
+Using Column Aliases
+Using Arithmetic expressions and NULL values in the SELECT statement
+Restricting and Sorting Data
+Using Substitution Variables
+Single-Row Functions to Customize Output
+Date Manipulation
+Using Conversion Functions
+Reporting Aggregated Data Using Group Functions
+Restricting Group Results
+Using Joins
+Using Subqueries to Solve Queries
+Using SET Operators
+*/
