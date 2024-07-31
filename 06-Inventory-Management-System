@@ -1,0 +1,99 @@
+-- This SQL code manages an inventory system by creating tables, inserting data, and querying information.
+-- It includes operations like retrieving, sorting, and grouping inventory details.
+
+-- Create table for products
+CREATE TABLE Products (
+    ProductID INT PRIMARY KEY,           -- Unique identifier for each product
+    ProductName VARCHAR(100),            -- Name of the product
+    SupplierID INT,                      -- Identifier for the supplier of the product
+    WarehouseID INT,                     -- Identifier for the warehouse where the product is stored
+    StockQuantity INT,                  -- Quantity of the product in stock
+    Price DECIMAL(10, 2)                 -- Price of the product
+);
+
+-- Create table for suppliers
+CREATE TABLE Suppliers (
+    SupplierID INT PRIMARY KEY,          -- Unique identifier for each supplier
+    SupplierName VARCHAR(100),           -- Name of the supplier
+    ContactEmail VARCHAR(100)            -- Email address of the supplier
+);
+
+-- Create table for warehouses
+CREATE TABLE Warehouses (
+    WarehouseID INT PRIMARY KEY,         -- Unique identifier for each warehouse
+    WarehouseLocation VARCHAR(100)       -- Location of the warehouse
+);
+
+-- Insert data into Products table
+INSERT INTO Products (ProductID, ProductName, SupplierID, WarehouseID, StockQuantity, Price)
+VALUES
+(1, 'Laptop', 101, 201, 50, 1200.00),
+(2, 'Mouse', 102, 202, 150, 25.00),
+(3, 'Keyboard', 103, 203, 75, 50.00);
+
+-- Insert data into Suppliers table
+INSERT INTO Suppliers (SupplierID, SupplierName, ContactEmail)
+VALUES
+(101, 'Tech Supplies Inc.', 'contact@techsupplies.com'),
+(102, 'Gadget World', 'info@gadgetworld.com'),
+(103, 'Office Essentials', 'support@officeessentials.com');
+
+-- Insert data into Warehouses table
+INSERT INTO Warehouses (WarehouseID, WarehouseLocation)
+VALUES
+(201, 'Main Warehouse'),
+(202, 'North Branch'),
+(203, 'South Branch');
+
+-- Query to retrieve product details with supplier names and warehouse locations
+SELECT 
+    p.ProductID AS "Product ID",               -- Product identifier
+    p.ProductName AS "Product Name",           -- Name of the product
+    s.SupplierName AS "Supplier Name",         -- Name of the supplier
+    w.WarehouseLocation AS "Warehouse Location", -- Location of the warehouse
+    p.StockQuantity AS "Stock Quantity",       -- Quantity of the product in stock
+    p.Price AS "Price"                         -- Price of the product
+FROM 
+    Products p
+JOIN 
+    Suppliers s ON p.SupplierID = s.SupplierID -- Join Products with Suppliers on SupplierID
+JOIN 
+    Warehouses w ON p.WarehouseID = w.WarehouseID -- Join Products with Warehouses on WarehouseID
+ORDER BY 
+    p.Price DESC;                             -- Order results by product price in descending order
+
+-- Query to retrieve products with low stock, sorted by stock quantity
+SELECT 
+    ProductID AS "Product ID",                 -- Product identifier
+    ProductName AS "Product Name",             -- Name of the product
+    StockQuantity AS "Stock Quantity"         -- Quantity of the product in stock
+FROM 
+    Products
+WHERE 
+    StockQuantity < 100                      -- Filter products with stock quantity less than 100
+ORDER BY 
+    StockQuantity ASC;                       -- Order results by stock quantity in ascending order
+
+
+/*
+EXPLANATION OF THE CODE
+
+Creates Tables: Defines three tables (Products, Suppliers, Warehouses) with necessary columns and data types.
+Inserts Data: Populates these tables with sample data using INSERT INTO statements.
+Retrieves Data: Uses SELECT statements to query product details, joining with suppliers and warehouses for complete information.
+Joins Tables: Joins Products with Suppliers and Warehouses to include supplier names and warehouse locations in the result.
+Sorts Data: Orders the product details by price in descending order and retrieves products with stock quantities less than 100, sorting these by stock quantity in ascending order.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Creating Tables: CREATE TABLE statements.
+Inserting Data: INSERT INTO statements.
+Retrieving Data: SELECT statements.
+Using Joins: JOIN operations to combine data from multiple tables.
+Sorting Data: ORDER BY clause to sort query results.
+Using Aliases: AS clause to provide readable column names.
+Filtering Data: WHERE clause to filter records based on conditions.
+*/
