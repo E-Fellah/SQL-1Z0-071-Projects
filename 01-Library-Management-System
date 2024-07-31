@@ -1,0 +1,86 @@
+-- This SQL code manages a library system by creating tables, inserting data, and querying information.
+-- It demonstrates retrieval of data, manipulation, and reporting functionalities.
+
+-- Create table for authors
+CREATE TABLE authors (
+    author_id NUMBER PRIMARY KEY,
+    author_name VARCHAR2(100),
+    country VARCHAR2(50)
+);
+
+-- Create table for publishers
+CREATE TABLE publishers (
+    publisher_id NUMBER PRIMARY KEY,
+    publisher_name VARCHAR2(100),
+    city VARCHAR2(50)
+);
+
+-- Create table for books
+CREATE TABLE books (
+    book_id NUMBER PRIMARY KEY,
+    title VARCHAR2(200),
+    author_id NUMBER,
+    publisher_id NUMBER,
+    price NUMBER(8, 2),
+    publication_date DATE,
+    CONSTRAINT fk_author FOREIGN KEY (author_id) REFERENCES authors(author_id),
+    CONSTRAINT fk_publisher FOREIGN KEY (publisher_id) REFERENCES publishers(publisher_id)
+);
+
+-- Insert data into authors table
+INSERT INTO authors (author_id, author_name, country) VALUES (1, 'George Orwell', 'United Kingdom');
+INSERT INTO authors (author_id, author_name, country) VALUES (2, 'Haruki Murakami', 'Japan');
+
+-- Insert data into publishers table
+INSERT INTO publishers (publisher_id, publisher_name, city) VALUES (1, 'Penguin Books', 'London');
+INSERT INTO publishers (publisher_id, publisher_name, city) VALUES (2, 'Vintage Books', 'Tokyo');
+
+-- Insert data into books table
+INSERT INTO books (book_id, title, author_id, publisher_id, price, publication_date) VALUES (1, '1984', 1, 1, 15.00, TO_DATE('1949-06-08', 'YYYY-MM-DD'));
+INSERT INTO books (book_id, title, author_id, publisher_id, price, publication_date) VALUES (2, 'Norwegian Wood', 2, 2, 20.00, TO_DATE('1987-09-04', 'YYYY-MM-DD'));
+
+-- Retrieve all books with their authors and publishers
+SELECT b.title AS "Book Title", a.author_name AS "Author", p.publisher_name AS "Publisher", b.price AS "Price"
+FROM books b
+JOIN authors a ON b.author_id = a.author_id
+JOIN publishers p ON b.publisher_id = p.publisher_id;
+
+-- Retrieve the most expensive book
+SELECT title, price
+FROM books
+ORDER BY price DESC
+FETCH FIRST ROW ONLY;
+
+-- Calculate the average price of books
+SELECT AVG(price) AS "Average Price"
+FROM books;
+
+
+/*
+EXPLANATION OF THE CODE
+
+The code starts by creating three tables: authors, publishers, and books. Each table has columns relevant to their purpose and primary keys.
+Data is inserted into the authors table with information about authors.
+Data is inserted into the publishers table with information about publishers.
+Data is inserted into the books table with book titles, prices, and dates. Foreign keys are used to link books to their authors and publishers.
+The first query retrieves all books along with their author names and publisher names by joining the books, authors, and publishers tables.
+The second query finds the most expensive book by ordering the books by price in descending order and limiting the result to the top row.
+The third query calculates the average price of all books.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Relational Database Concepts: Designing and creating tables with relationships.
+Using SQL SELECT Statement: Retrieving data with joins and filtering.
+Using Column Aliases: Renaming columns for better readability.
+Using The SQL SELECT Statement: Writing complex queries.
+Using Arithmetic Expressions and NULL Values: Calculating averages and handling NULL values.
+Sorting Data: Ordering results based on price.
+Using Single-Row Functions: Formatting dates with TO_DATE.
+Nesting Multiple Functions: Using functions within queries for calculations and formatting.
+Joining Tables: Combining data from multiple tables.
+DML Statements: Inserting data into tables.
+DDL Statements: Creating and managing tables with primary and foreign keys.
+*/
