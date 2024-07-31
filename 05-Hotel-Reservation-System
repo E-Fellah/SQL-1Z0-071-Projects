@@ -1,0 +1,87 @@
+-- This SQL script creates tables for a Hotel Reservation System.
+-- It includes tables for guests, rooms, reservations, and manages their relationships.
+
+-- Create table for guests
+CREATE TABLE Guests (
+    GuestID NUMBER PRIMARY KEY,                -- Unique identifier for each guest
+    FirstName VARCHAR2(50) NOT NULL,          -- Guest's first name
+    LastName VARCHAR2(50) NOT NULL,           -- Guest's last name
+    PhoneNumber VARCHAR2(15),                 -- Guest's phone number
+    Email VARCHAR2(100) UNIQUE                -- Guest's email address
+);
+
+-- Create table for rooms
+CREATE TABLE Rooms (
+    RoomID NUMBER PRIMARY KEY,                -- Unique identifier for each room
+    RoomType VARCHAR2(20) NOT NULL,           -- Type of the room (e.g., Single, Double)
+    Rate NUMBER(8, 2) NOT NULL,               -- Rate per night for the room
+    Status VARCHAR2(20) NOT NULL              -- Status of the room (e.g., Available, Booked)
+);
+
+-- Create table for reservations
+CREATE TABLE Reservations (
+    ReservationID NUMBER PRIMARY KEY,         -- Unique identifier for each reservation
+    GuestID NUMBER REFERENCES Guests(GuestID),  -- Foreign key referencing Guests
+    RoomID NUMBER REFERENCES Rooms(RoomID),   -- Foreign key referencing Rooms
+    CheckInDate DATE NOT NULL,                -- Check-in date for the reservation
+    CheckOutDate DATE NOT NULL,               -- Check-out date for the reservation
+    Status VARCHAR2(20) NOT NULL              -- Status of the reservation (e.g., Confirmed, Cancelled)
+);
+
+-- Insert sample data into Guests table
+INSERT INTO Guests (GuestID, FirstName, LastName, PhoneNumber, Email)
+VALUES (1, 'John', 'Doe', '123-456-7890', 'john.doe@example.com');
+
+INSERT INTO Guests (GuestID, FirstName, LastName, PhoneNumber, Email)
+VALUES (2, 'Jane', 'Smith', '987-654-3210', 'jane.smith@example.com');
+
+-- Insert sample data into Rooms table
+INSERT INTO Rooms (RoomID, RoomType, Rate, Status)
+VALUES (101, 'Single', 100.00, 'Available');
+
+INSERT INTO Rooms (RoomID, RoomType, Rate, Status)
+VALUES (102, 'Double', 150.00, 'Available');
+
+-- Insert sample data into Reservations table
+INSERT INTO Reservations (ReservationID, GuestID, RoomID, CheckInDate, CheckOutDate, Status)
+VALUES (1, 1, 101, TO_DATE('2024-08-01', 'YYYY-MM-DD'), TO_DATE('2024-08-05', 'YYYY-MM-DD'), 'Confirmed');
+
+INSERT INTO Reservations (ReservationID, GuestID, RoomID, CheckInDate, CheckOutDate, Status)
+VALUES (2, 2, 102, TO_DATE('2024-08-10', 'YYYY-MM-DD'), TO_DATE('2024-08-15', 'YYYY-MM-DD'), 'Confirmed');
+
+-- Query to retrieve all reservations with guest and room details
+SELECT 
+    r.ReservationID,
+    g.FirstName || ' ' || g.LastName AS GuestName,   -- Concatenate first and last name of the guest
+    rm.RoomType,
+    r.CheckInDate,
+    r.CheckOutDate,
+    r.Status
+FROM Reservations r
+JOIN Guests g ON r.GuestID = g.GuestID           -- Join with Guests table
+JOIN Rooms rm ON r.RoomID = rm.RoomID;           -- Join with Rooms table
+
+
+/*
+EXPLANATION OF THE CODE
+
+Creates a table named Guests to store information about guests including their ID, name, phone number, and email.
+Creates a table named Rooms to store information about rooms including their ID, type, rate, and status.
+Creates a table named Reservations to store reservation details including the reservation ID, guest ID, room ID, check-in and check-out dates, and reservation status.
+Inserts sample data into the Guests table with two guest records.
+Inserts sample data into the Rooms table with two room records.
+Inserts sample data into the Reservations table with two reservation records.
+Queries and retrieves reservation details along with guest names and room types using SQL joins.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Creating Tables: Use of CREATE TABLE to define new tables.
+Inserting Data: Use of INSERT INTO to add sample data into tables.
+Data Retrieval: Use of SELECT to retrieve and display data.
+Concatenation: Use of || to concatenate guest names.
+Joins: Use of JOIN to combine data from multiple tables.
+Date Handling: Use of TO_DATE to handle date formats.
+*/
