@@ -1,0 +1,91 @@
+-- This script demonstrates the creation and management of a student enrollment system
+-- It includes operations for creating tables, inserting data, querying, and updating records
+
+-- Create the table for storing student information
+CREATE TABLE Students (
+    Student_ID NUMBER PRIMARY KEY,       -- Unique identifier for each student
+    First_Name VARCHAR2(50),             -- Student's first name
+    Last_Name VARCHAR2(50),              -- Student's last name
+    Birth_Date DATE,                     -- Student's date of birth
+    Enrollment_Date DATE                 -- Date the student enrolled
+);
+
+-- Create the table for storing course information
+CREATE TABLE Courses (
+    Course_ID NUMBER PRIMARY KEY,        -- Unique identifier for each course
+    Course_Name VARCHAR2(100),           -- Name of the course
+    Credits NUMBER                       -- Number of credits for the course
+);
+
+-- Create the table for storing enrollment records
+CREATE TABLE Enrollments (
+    Enrollment_ID NUMBER PRIMARY KEY,    -- Unique identifier for each enrollment record
+    Student_ID NUMBER REFERENCES Students(Student_ID), -- Foreign key referencing Students table
+    Course_ID NUMBER REFERENCES Courses(Course_ID),   -- Foreign key referencing Courses table
+    Enrollment_Date DATE                 -- Date the student enrolled in the course
+);
+
+-- Insert sample data into the Students table
+INSERT INTO Students (Student_ID, First_Name, Last_Name, Birth_Date, Enrollment_Date) 
+VALUES (1, 'John', 'Doe', TO_DATE('2000-01-15', 'YYYY-MM-DD'), SYSDATE);
+
+INSERT INTO Students (Student_ID, First_Name, Last_Name, Birth_Date, Enrollment_Date) 
+VALUES (2, 'Jane', 'Smith', TO_DATE('1999-05-23', 'YYYY-MM-DD'), SYSDATE);
+
+-- Insert sample data into the Courses table
+INSERT INTO Courses (Course_ID, Course_Name, Credits) 
+VALUES (101, 'Database Systems', 4);
+
+INSERT INTO Courses (Course_ID, Course_Name, Credits) 
+VALUES (102, 'Introduction to Programming', 3);
+
+-- Insert sample data into the Enrollments table
+INSERT INTO Enrollments (Enrollment_ID, Student_ID, Course_ID, Enrollment_Date) 
+VALUES (1, 1, 101, SYSDATE);
+
+INSERT INTO Enrollments (Enrollment_ID, Student_ID, Course_ID, Enrollment_Date) 
+VALUES (2, 2, 102, SYSDATE);
+
+-- Query to retrieve student details with their enrolled courses
+SELECT s.Student_ID, s.First_Name, s.Last_Name, c.Course_Name, e.Enrollment_Date
+FROM Students s
+JOIN Enrollments e ON s.Student_ID = e.Student_ID
+JOIN Courses c ON e.Course_ID = c.Course_ID;
+
+-- Update an enrollment record
+UPDATE Enrollments
+SET Course_ID = 102
+WHERE Enrollment_ID = 1;
+
+-- Delete a student record
+DELETE FROM Students
+WHERE Student_ID = 2;
+
+-- Display all students
+SELECT * FROM Students;
+
+
+/*
+EXPLANATION OF THE CODE
+
+Create Tables: Defines the schema for Students, Courses, and Enrollments tables.
+Insert Data: Adds sample records to Students, Courses, and Enrollments tables.
+Query Data: Joins Students, Enrollments, and Courses to show student details along with their enrolled courses.
+Update Data: Updates an existing enrollment record to change the course for a particular enrollment ID.
+Delete Data: Removes a student record from the Students table.
+Display Data: Retrieves all records from the Students table to show current student data.
+*/
+
+
+/*
+NOTIONS COVERED
+
+Creating Tables: Table creation with primary and foreign keys.
+Inserting Data: Adding records to tables.
+Retrieving Data: Using SELECT statements to query data.
+Joins: Joining tables to combine and retrieve related data.
+Updating Data: Modifying existing records.
+Deleting Data: Removing records from tables.
+Using Conversion Functions: TO_DATE to convert strings to date format.
+Date Manipulation: Working with SYSDATE to handle current date and time.
+*/
